@@ -20,10 +20,24 @@ import argparse
 import os
 import random
 import sys
+from os import sys, path
+
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+
+# sys.path.append('/home/zhfzh/fuz/codes/nmt/')
+# sys.path.append('/home/zhfzh/fuz/codes/nmt/nmt/')
+#
+# os.chdir('/home/zhfzh/fuz/codes/nmt/nmt/')
 
 # import matplotlib.image as mpimg
 import numpy as np
 import tensorflow as tf
+
+
+
+# import inference
+# print ('zhfzh')
+# sys.exit(0)
 
 from . import inference
 from . import train
