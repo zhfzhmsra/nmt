@@ -308,9 +308,17 @@ def train(hparams, scope=None, target_session=""):
     ### Run a step ###
     start_time = time.time()
     try:
-      step_result = train_model.train(train_sess)
+      # step_result = train_model.train(train_sess)
+      # (_, step_loss, step_predict_count, step_summary, global_step,
+      #  step_word_count, batch_size) = step_result
+
+      step_result = train_model.train_zhfzh(train_sess)
       (_, step_loss, step_predict_count, step_summary, global_step,
-       step_word_count, batch_size) = step_result
+       step_word_count, batch_size,
+       _source, _encoder_emb_inp, _encoder_outputs,
+       _iterator, _cell, _encoder_state
+       ) = step_result
+
       hparams.epoch_step += 1
     except tf.errors.OutOfRangeError:
       # Finished going through the training dataset.  Go to next epoch.

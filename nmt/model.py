@@ -186,6 +186,24 @@ class BaseModel(object):
                      self.word_count,
                      self.batch_size])
 
+  #zhfzh
+  def train_zhfzh(self, sess):
+    assert self.mode == tf.contrib.learn.ModeKeys.TRAIN
+    return sess.run([self.update,
+                     self.train_loss,
+                     self.predict_count,
+                     self.train_summary,
+                     self.global_step,
+                     self.word_count,
+                     self.batch_size,
+                     self.source,
+                     self.encoder_emb_inp,
+                     self.encoder_outputs,
+                     self.iterator,
+                     self.cell,
+                     self.encoder_state
+                     ])
+
   def eval(self, sess):
     assert self.mode == tf.contrib.learn.ModeKeys.EVAL
     return sess.run([self.eval_loss,
@@ -471,6 +489,8 @@ class Model(BaseModel):
     if self.time_major:
       source = tf.transpose(source)
 
+
+
     with tf.variable_scope("encoder") as scope:
       dtype = scope.dtype
       # Look up embedding, emp_inp: [max_time, batch_size, num_units]
@@ -490,6 +510,14 @@ class Model(BaseModel):
             dtype=dtype,
             sequence_length=iterator.source_sequence_length,
             time_major=self.time_major)
+
+        # zhfzh
+        self.source = source
+        self.encoder_emb_inp = encoder_emb_inp
+        self.cell = cell
+        self.encoder_outputs = encoder_outputs
+        self.encoder_state = encoder_state
+        # zhfzh
       elif hparams.encoder_type == "bi":
         num_bi_layers = int(num_layers / 2)
         num_bi_residual_layers = int(num_residual_layers / 2)
