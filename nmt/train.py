@@ -315,8 +315,10 @@ def train(hparams, scope=None, target_session=""):
       step_result = train_model.train_zhfzh(train_sess)
       (_, step_loss, step_predict_count, step_summary, global_step,
        step_word_count, batch_size,
-       _source, _encoder_emb_inp, _encoder_outputs,
-       _iterator, _cell, _encoder_state
+       _source, _target_input, _target_output
+       , _source_sequence_length, _target_sequence_length
+       , _encoder_emb_inp, _encoder_outputs, _encoder_state
+       , _decoder_emb_inp, _logits, _sample_id, _final_context_state,_decoder_outputs
        ) = step_result
 
       hparams.epoch_step += 1
@@ -361,6 +363,9 @@ def train(hparams, scope=None, target_session=""):
       # Reset timer and loss.
       step_time, checkpoint_loss, checkpoint_predict_count = 0.0, 0.0, 0.0
       checkpoint_total_count = 0.0
+
+    steps_per_eval = 10
+    steps_per_external_eval = 20
 
     if global_step % steps_per_eval == 0:
       utils.print_out("# Save eval, global step %d" % global_step)

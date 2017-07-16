@@ -197,11 +197,20 @@ class BaseModel(object):
                      self.word_count,
                      self.batch_size,
                      self.source,
+                     self.target_input,
+                     self.target_output,
+                     self.source_sequence_length,
+                     self.target_sequence_length,
                      self.encoder_emb_inp,
                      self.encoder_outputs,
-                     self.iterator,
-                     self.cell,
-                     self.encoder_state
+                     #self.iterator,
+                     #self.cell,
+                     self.encoder_state,
+                     self.decoder_emb_inp,
+                     self.logits,
+                     self.sample_id,
+                     self.final_context_state,
+                     self.decoder_outputs
                      ])
 
   def eval(self, sess):
@@ -242,6 +251,10 @@ class BaseModel(object):
       ## Decoder
       logits, sample_id, final_context_state = self._build_decoder(
           encoder_outputs, encoder_state, hparams)
+
+      self.logits = logits
+      self.sample_id = sample_id
+      self.final_context_state = final_context_state
 
       ## Loss
       if self.mode != tf.contrib.learn.ModeKeys.INFER:
@@ -358,6 +371,11 @@ class BaseModel(object):
         device_id = num_layers if num_layers < num_gpus else (num_layers - 1)
         with tf.device(model_helper.get_device_str(device_id, num_gpus)):
           logits = self.output_layer(outputs.rnn_output)
+
+        #zhfzh
+        self.decoder_emb_inp = decoder_emb_inp
+        self.decoder_outputs = outputs
+        #zhfzh
 
       ## Inference
       else:
@@ -513,6 +531,12 @@ class Model(BaseModel):
 
         # zhfzh
         self.source = source
+        self.target_input = iterator.target_input
+        self.target_output = iterator.target_output
+        self.source_sequence_length = iterator.source_sequence_length
+        self.target_sequence_length = iterator.target_sequence_length
+
+
         self.encoder_emb_inp = encoder_emb_inp
         self.cell = cell
         self.encoder_outputs = encoder_outputs
