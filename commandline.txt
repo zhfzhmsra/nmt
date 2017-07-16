@@ -1,0 +1,1 @@
+--src=vi --tgt=en --vocab_prefix=data/vocab --train_prefix=data/train --dev_prefix=data/tst2012 --test_prefix=/tmp/nmt_data/tst2013 --out_dir=/tmp/nmt_model --num_train_steps=200 --steps_per_stats=100 --num_layers=2 --num_units=10 --dropout=0.2 --metrics=bleu
