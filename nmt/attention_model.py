@@ -134,6 +134,9 @@ def create_attention_mechanism(attention_option, num_units, memory,
                                source_sequence_length):
   """Create attention mechanism based on the attention_option."""
   # Mechanism
+
+  #zhfzh
+  #num_units is $$W\overline{h}_s$$ in luong
   if attention_option == "luong":
     attention_mechanism = tf.contrib.seq2seq.LuongAttention(
         num_units, memory, memory_sequence_length=source_sequence_length)
