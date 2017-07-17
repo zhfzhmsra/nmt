@@ -364,8 +364,9 @@ def train(hparams, scope=None, target_session=""):
       step_time, checkpoint_loss, checkpoint_predict_count = 0.0, 0.0, 0.0
       checkpoint_total_count = 0.0
 
-    steps_per_eval = 10
-    steps_per_external_eval = 20
+
+    # steps_per_eval = 10
+    # steps_per_external_eval = 20
 
     if global_step % steps_per_eval == 0:
       utils.print_out("# Save eval, global step %d" % global_step)
