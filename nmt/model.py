@@ -515,6 +515,15 @@ class Model(BaseModel):
       encoder_emb_inp = tf.nn.embedding_lookup(
           self.embedding_encoder, source)
 
+      # zhfzh
+      self.source = source
+      self.target_input = iterator.target_input
+      self.target_output = iterator.target_output
+      self.source_sequence_length = iterator.source_sequence_length
+      self.target_sequence_length = iterator.target_sequence_length
+      self.encoder_emb_inp = encoder_emb_inp
+      # zhfzh
+
       # Encoder_outpus: [max_time, batch_size, num_units]
       if hparams.encoder_type == "uni":
         utils.print_out("  num_layers = %d, num_residual_layers=%d" %
@@ -530,14 +539,6 @@ class Model(BaseModel):
             time_major=self.time_major)
 
         # zhfzh
-        self.source = source
-        self.target_input = iterator.target_input
-        self.target_output = iterator.target_output
-        self.source_sequence_length = iterator.source_sequence_length
-        self.target_sequence_length = iterator.target_sequence_length
-
-
-        self.encoder_emb_inp = encoder_emb_inp
         self.cell = cell
         self.encoder_outputs = encoder_outputs
         self.encoder_state = encoder_state
@@ -556,7 +557,6 @@ class Model(BaseModel):
                 hparams=hparams,
                 num_bi_layers=num_bi_layers,
                 num_bi_residual_layers=num_bi_residual_layers))
-
         if num_bi_layers == 1:
           encoder_state = bi_encoder_state
         else:
@@ -566,6 +566,11 @@ class Model(BaseModel):
             encoder_state.append(bi_encoder_state[0][layer_id])  # forward
             encoder_state.append(bi_encoder_state[1][layer_id])  # backward
           encoder_state = tuple(encoder_state)
+
+        # zhfzh
+        self.encoder_outputs = encoder_outputs
+        self.encoder_state = encoder_state
+        # zhfzh
       else:
         raise ValueError("Unknown encoder_type %s" % hparams.encoder_type)
     return encoder_outputs, encoder_state
