@@ -210,7 +210,8 @@ class BaseModel(object):
                      self.logits,
                      self.sample_id,
                      self.final_context_state,
-                     self.decoder_outputs
+                     self.decoder_outputs,
+                     self.bi_encoder_state
                      ])
 
   def eval(self, sess):
@@ -244,9 +245,24 @@ class BaseModel(object):
     num_layers = hparams.num_layers
     num_gpus = hparams.num_gpus
 
+    # zhfzh
+    self.source = self.iterator.source
+    self.target_input = self.iterator.target_input
+    self.target_output = self.iterator.target_output
+    self.source_sequence_length = self.iterator.source_sequence_length
+    self.target_sequence_length = self.iterator.target_sequence_length
+
+    # zhfzh
+
+
     with tf.variable_scope(scope or "dynamic_seq2seq", dtype=dtype):
       # Encoder
       encoder_outputs, encoder_state = self._build_encoder(hparams)
+
+      # zhfzh
+      self.encoder_outputs = encoder_outputs
+      self.encoder_state = encoder_state
+      # zhfzh
 
       ## Decoder
       logits, sample_id, final_context_state = self._build_decoder(
@@ -515,14 +531,7 @@ class Model(BaseModel):
       encoder_emb_inp = tf.nn.embedding_lookup(
           self.embedding_encoder, source)
 
-      # zhfzh
-      self.source = source
-      self.target_input = iterator.target_input
-      self.target_output = iterator.target_output
-      self.source_sequence_length = iterator.source_sequence_length
-      self.target_sequence_length = iterator.target_sequence_length
       self.encoder_emb_inp = encoder_emb_inp
-      # zhfzh
 
       # Encoder_outpus: [max_time, batch_size, num_units]
       if hparams.encoder_type == "uni":
@@ -540,8 +549,6 @@ class Model(BaseModel):
 
         # zhfzh
         self.cell = cell
-        self.encoder_outputs = encoder_outputs
-        self.encoder_state = encoder_state
         # zhfzh
       elif hparams.encoder_type == "bi":
         num_bi_layers = int(num_layers / 2)
@@ -566,11 +573,6 @@ class Model(BaseModel):
             encoder_state.append(bi_encoder_state[0][layer_id])  # forward
             encoder_state.append(bi_encoder_state[1][layer_id])  # backward
           encoder_state = tuple(encoder_state)
-
-        # zhfzh
-        self.encoder_outputs = encoder_outputs
-        self.encoder_state = encoder_state
-        # zhfzh
       else:
         raise ValueError("Unknown encoder_type %s" % hparams.encoder_type)
     return encoder_outputs, encoder_state

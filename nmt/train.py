@@ -319,6 +319,7 @@ def train(hparams, scope=None, target_session=""):
        , _source_sequence_length, _target_sequence_length
        , _encoder_emb_inp, _encoder_outputs, _encoder_state
        , _decoder_emb_inp, _logits, _sample_id, _final_context_state,_decoder_outputs
+       , _bi_encoder_state
        ) = step_result
 
       hparams.epoch_step += 1

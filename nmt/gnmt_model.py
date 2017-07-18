@@ -80,6 +80,8 @@ class GNMTModel(attention_model.AttentionModel):
       encoder_emb_inp = tf.nn.embedding_lookup(self.embedding_encoder,
                                                source)
 
+      self.encoder_emb_inp = encoder_emb_inp
+
       # Execute _build_bidirectional_rnn from Model class
       bi_encoder_outputs, bi_encoder_state = self._build_bidirectional_rnn(
           inputs=encoder_emb_inp,
@@ -114,6 +116,8 @@ class GNMTModel(attention_model.AttentionModel):
       # decoder.
       encoder_state = (bi_encoder_state[1],) + (
           (encoder_state,) if num_uni_layers == 1 else encoder_state)
+
+      self.bi_encoder_state = bi_encoder_state
 
     return encoder_outputs, encoder_state
 
